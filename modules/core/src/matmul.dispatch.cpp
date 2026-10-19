@@ -51,6 +51,7 @@
 
 #include "matmul.simd.hpp"
 #include "matmul.simd_declarations.hpp" // defines CV_CPU_DISPATCH_MODES_ALL=AVX2,...,BASELINE based on CMakeLists.txt content
+#include "gemm/gemm_engine.hpp"
 
 namespace cv
 {
@@ -283,6 +284,11 @@ void gemm32f(const float* src1, size_t src1_step, const float* src2, size_t src2
 {
     CV_INSTRUMENT_REGION();
     CALL_HAL(gemm32f, cv_hal_gemm32f, src1, src1_step, src2, src2_step, alpha, src3, src3_step, beta, dst, dst_step, m_a, n_a, n_d, flags)
+#if CV_NEON && CV_NEON_AARCH64
+    // Below the LAPACK threshold, or without LAPACK, the in-house engine takes it.
+    if (gemm_engine::gemm32f(src1, src1_step, src2, src2_step, alpha, src3, src3_step, beta, dst, dst_step, m_a, n_a, n_d, flags))
+        return;
+#endif
 #ifdef CV_GEMM_BASELINE_ONLY
     CV_CPU_CALL_BASELINE(gemm32f, (src1, src1_step, src2, src2_step, alpha, src3, src3_step, beta, dst, dst_step, m_a, n_a, n_d, flags));
 #else
