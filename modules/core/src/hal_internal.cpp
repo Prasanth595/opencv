@@ -749,6 +749,10 @@ static inline bool shouldUseLapackGemm(int m, int n, int k, int flags)
 int lapack_gemm32f(const float *src1, size_t src1_step, const float *src2, size_t src2_step, float alpha,
                    const float *src3, size_t src3_step, float beta, float *dst, size_t dst_step, int m, int n, int k, int flags)
 {
+#if CV_NEON && CV_NEON_AARCH64 && defined(HAVE_LAPACK_BUILTIN)
+    // The built-in reference LAPACK is slower than the GEMM engine, which cv::hal::gemm32f calls next.
+    return CV_HAL_ERROR_NOT_IMPLEMENTED;
+#endif
     if(!shouldUseLapackGemm(m, n, k, flags))
         return CV_HAL_ERROR_NOT_IMPLEMENTED;
     return lapack_gemm(src1, src1_step, src2, src2_step, alpha, src3, src3_step, beta, dst, dst_step, m, n, k, flags);

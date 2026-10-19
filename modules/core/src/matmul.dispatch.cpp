@@ -285,7 +285,8 @@ void gemm32f(const float* src1, size_t src1_step, const float* src2, size_t src2
     CV_INSTRUMENT_REGION();
     CALL_HAL(gemm32f, cv_hal_gemm32f, src1, src1_step, src2, src2_step, alpha, src3, src3_step, beta, dst, dst_step, m_a, n_a, n_d, flags)
 #if CV_NEON && CV_NEON_AARCH64
-    // Below the LAPACK threshold, or without LAPACK, the in-house engine takes it.
+    // Whatever the HAL leaves (below the LAPACK threshold, no LAPACK, or the built-in LAPACK, which
+    // declines fp32 on AArch64) runs on the engine.
     if (gemm_engine::gemm32f(src1, src1_step, src2, src2_step, alpha, src3, src3_step, beta, dst, dst_step, m_a, n_a, n_d, flags))
         return;
 #endif
