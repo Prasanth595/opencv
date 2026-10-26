@@ -304,6 +304,7 @@ void approximateChainTC89(const ContourCodesStorage& chain, const Point& origin,
                           ContourPointsStorage& output);
 
 void findTRUContours(InputArray _src, OutputArrayOfArrays _contours, int minSize=0, bool binarize=false, int method=CHAIN_APPROX_NONE);
+void findTRUContours(InputArray _src, OutputArrayOfArrays _contours, OutputArray _hierarchy, int mode, int method, bool binarize);
 
 }  // namespace cv
 
