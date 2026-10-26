@@ -108,8 +108,7 @@ static inline int computeSpatChunks(int total_blocks, int planeblocks, int min_p
     int nSpatChunks = 1;
     int nthreads = cv::getNumThreads();
     int target_tasks = nthreads * TASKS_PER_THREAD;
-    // total_blocks is 0 for a zero batch; there is no work to split then.
-    if (total_blocks > 0 && total_blocks < target_tasks && planeblocks > min_per_chunk) {
+    if (total_blocks < target_tasks && planeblocks > min_per_chunk) {
         nSpatChunks = (target_tasks + total_blocks - 1) / total_blocks;
         int max_chunks = planeblocks / min_per_chunk;
         nSpatChunks = std::min(nSpatChunks, std::max(1, max_chunks));
